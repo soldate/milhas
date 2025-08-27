@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# sempre rodar a partir da raiz do projeto
+cd "$(dirname "$0")"
+
+# verificações rápidas
+command -v mvn >/dev/null 2>&1 || { echo "❌ Maven (mvn) não encontrado no PATH"; exit 1; }
+command -v java >/dev/null 2>&1 || { echo "❌ Java (JDK) não encontrado no PATH"; exit 1; }
+
+# porta opcional: ./run 9090  (ou use env PORT=9090)
+PORT_SYS_PROP=""
+if [[ $# -gt 0 ]]; then
+  PORT_SYS_PROP="-DPORT=$1"
+fi
+
+echo "▶️  Build (Maven)..."
+mvn -q -DskipTests clean package
+
+# pega o JAR mais recente dentro de target/
+JAR="$(ls -t target/*.jar 2>/dev/null | head -n 1 || true)"
+if [[ -z "${JAR}" ]]; then
+  echo "❌ Nenhum JAR encontrado em target/. Verifique o build."
+  exit 1
+fi
+
+echo "🚀 Executando: java ${PORT_SYS_PROP:+$PORT_SYS_PROP }-jar $JAR"
+exec java ${PORT_SYS_PROP} -jar "$JAR"

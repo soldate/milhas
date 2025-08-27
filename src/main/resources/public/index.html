@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mercado Milhas · bate-papo público (MVP)</title>
+  <meta name="description" content="Bate-papo público sobre milhas (Azul, Smiles, LATAM). Sem login. Mensagens de grupos autorizados identificadas.">
+  <meta property="og:title" content="Mercado Milhas · bate-papo público (MVP)">
+  <meta property="og:description" content="Digite sua mensagem e publique. Feed com mensagens marcadas por grupo.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0d6efd">
+
+  <!-- Bootstrap 5 via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Seu CSS -->
+  <link href="/css/app.css" rel="stylesheet">
+</head>
+<body>
+<header class="sticky-top sticky-topbar border-bottom app-header">
+  <div class="container py-2">
+    <div class="d-flex flex-column flex-md-row align-items-md-center gap-2 justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <!-- Logo -->
+        <div class="d-flex align-items-center gap-2">
+          <svg class="logo-mm text-whatsapp" viewBox="0 0 64 64" aria-hidden="true">
+            <circle class="ring" cx="32" cy="32" r="27" fill="none" stroke="currentColor"/>
+            <path class="m-bolt" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 48 L20 18 L32 38 L40 14 L50 52"/>
+            <line class="arrow-shaft" x1="50" y1="20" x2="64" y2="20" stroke="currentColor"/>
+            <polygon class="arrow-head" points="62,20 54,14 54,30"/>
+          </svg>
+          <span class="fs-5 fw-semibold">Mercado Milhas</span>
+        </div>
+
+        <div class="vr d-none d-md-block"></div>
+        <div class="d-flex align-items-center gap-2">
+          <button id="btnTheme" class="btn btn-sm btn-outline-secondary btn-theme" type="button" aria-label="Alternar tema">🌙</button>
+        </div>
+      </div>
+
+      <form id="postForm" class="w-100 w-md-auto">
+        <div class="row g-2 align-items-center">
+          <div class="col-12 col-md-9">
+            <label for="message" class="form-label visually-hidden">Mensagem</label>
+            <div class="input-group">
+              <input id="message" class="form-control" placeholder="ex: VENDO 50k milhas azul @meuinsta" maxlength="2000">
+              <button id="btnPublish" class="btn btn-outline-secondary" type="submit">Publicar</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</header>
+
+<main class="chat-wrap" id="chatWrap" aria-live="polite">
+  <div class="container py-3" id="feed"></div>
+</main>
+
+<footer class="border-top small py-3 app-footer">
+  <div class="container d-flex flex-column flex-md-row gap-2 justify-content-between">
+    <div>
+      <strong>Aviso:</strong> o Mercado Milhas não faz intermediação de vendas, apenas exibe o conteúdo de grupos com autorização dos administradores. Mensagens podem ser removidas por moderação.
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap JS (para modal/toast) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Seu JS -->
+<script src="/js/app.js" defer></script>
+</body>
+</html>

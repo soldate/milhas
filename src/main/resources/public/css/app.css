@@ -1,0 +1,81 @@
+:root{
+  --bg-header:#f5f4f0;
+  --bg-footer:#f5f4f0;
+  --bg-main:#ffffff;
+  --bg-zap:#fcf8f0;
+  --text:#0f172a;
+  --muted:#64748b;
+  --bubble-user-bg:#ffffff;
+  --bubble-group-bg:#f8fafc;
+  --bubble-system-bg:#fff7ed;
+  --border:#e5e7eb;
+  --border-system:#fed7aa;
+  --verified-bg:#e6f4ea;
+  --verified-color:#137333;
+  --verified-border:#b7e1cd;
+  --danger-bg:#f2ede6;
+  --danger-color:#733011;
+  --danger-border:#e0c5b8;
+}
+[data-theme="dark"]{
+  --bg-header:#0b0b0b;
+  --bg-footer:#0b0b0b;
+  --bg-main:#121314;
+  --bg-zap:#0b0b0b;
+  --text:#e5e7eb;
+  --muted:#a0a6ad;
+  --bubble-user-bg:#16181a;
+  --bubble-group-bg:#141618;
+  --bubble-system-bg:#1b1710;
+  --border:#2a2e33;
+  --border-system:#5a4630;
+  --verified-bg:#19331f;
+  --verified-color:#99d6a1;
+  --verified-border:#265a35;
+  --danger-bg:#331e19;
+  --danger-color:#d6a49a;
+  --danger-border:#5c2d26;
+}
+html,body{height:100%}
+body{background:var(--bg-main);color:var(--text)}
+.app-header{background:var(--bg-header)}
+.app-footer{background:var(--bg-footer)}
+.msg{max-width: 820px}
+.msg .bubble{border-radius:1rem; padding:.65rem .85rem; border:1px solid var(--border)}
+.msg-user .bubble{background:var(--bubble-user-bg)}
+.msg-group .bubble{background:var(--bubble-group-bg)}
+.msg-system .bubble{background:var(--bubble-system-bg); border-color:var(--border-system)}
+.msg .meta{font-size:.72rem; color:var(--muted)}
+.sticky-topbar{backdrop-filter:saturate(1.2) blur(6px);}
+.badge-verified{background:var(--verified-bg); color:var(--verified-color); border:1px solid var(--verified-border)}
+.badge-danger{background:var(--danger-bg); color:var(--danger-color); border:1px solid var(--danger-border)}
+.brand{letter-spacing:.3px}
+.no-focus:focus{box-shadow:none}
+.btn-theme{min-width:3rem}
+
+/* “WhatsApp green” */
+.text-whatsapp{ color:#25D366 !important; }
+.logo-mm{ width:80px; height:80px; display:block; }
+.logo-mm .ring{ stroke-width:4; stroke-dasharray:172 46; stroke-dashoffset:10; }
+.logo-mm .m-bolt{ stroke-width:3; }
+.logo-mm .arrow-shaft{ stroke-width:5; stroke-linecap:round; }
+.logo-mm .arrow-head{ fill: currentColor; }
+
+.chat-wrap{
+  scroll-behavior: smooth;
+  height: calc(100vh - 152px);
+  overflow-y: auto;
+  background-color: var(--bg-zap);
+  background-image:
+    radial-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'>\
+  <g fill='none' stroke='%2390c9a9' stroke-opacity='0.34' stroke-width='1.4'>\
+  <path d='M20 40c10-10 20-10 30 0M80 120c12-12 24-12 36 0M150 60c9-9 18-9 27 0'/>\
+  <path d='M30 170c8-6 16-6 24 0M120 180c10-8 20-8 30 0M60 80c6-6 12-6 18 0'/>\
+  <circle cx='190' cy='160' r='6'/><circle cx='40' cy='120' r='4'/>\
+  </g>\
+</svg>");
+  background-size: 12px 12px, 220px 220px;
+  background-attachment: fixed;
+}
