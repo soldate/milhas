@@ -132,8 +132,8 @@ public class App {
           // Exemplo: só processar mensagens de entrada "chat"
           if ("i".equalsIgnoreCase(msgDir) && "chat".equalsIgnoreCase(msgType) && msgText != null) {
             // Monte uma linha “bonita” pro seu feed
-            String pretty = (fromName != null ? fromName : (fromUid != null ? fromUid : "WA"))
-                + ": " + msgText;
+            // String pretty = (fromName != null ? fromName : (fromUid != null ? fromUid : "WA")) + ": " + msgText;
+            String pretty = msgText;
 
             // Insere no KV como mais uma mensagem (mantendo as 50 últimas)
             // Usamos o seu gerador de IDs (ISO-8601 c/ espaçamento de 1ms)
