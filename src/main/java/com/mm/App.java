@@ -28,11 +28,18 @@ public class App {
 
     // CORS para todas as rotas
     app.before(ctx -> {
-      ctx.header("Access-Control-Allow-Origin", "*"); // em produção, prefira ecoar a origem específica
-      ctx.header("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
-      ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-      ctx.header("Access-Control-Max-Age", "86400"); // cacheia o preflight por 24h
+        if (ctx.path().startsWith("/m")) {
+          ctx.header("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+        } else {
+          ctx.header("Access-Control-Allow-Origin", "*"); // em produção, prefira ecoar a origem específica
+          ctx.header("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+          ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+          ctx.header("Access-Control-Max-Age", "86400"); // cacheia o preflight por 24h
+        }
     });
+
+      app.before(ctx -> {
+      });    
 
     // Healthcheck
     app.get("/healthz", ctx -> ctx.json(Map.of("ok", true)));
