@@ -3,7 +3,7 @@ package com.mm;
 import java.io.IOException;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.javalin.Javalin;
 import io.javalin.http.HttpStatus;
@@ -47,31 +47,6 @@ public class App {
     // Responde o preflight
     app.options("/*", ctx -> ctx.status(204));
 
-    // SET (put): {"v":"valor"} Obs: k é gerado automaticamente (timestamp)     
-    app.post("/api/pmap", ctx -> {
-      com.fasterxml.jackson.databind.JsonNode node;
-      try {
-        node = S.JSON.readTree(ctx.body());
-      } catch (JsonMappingException parse) {
-        ctx.status(HttpStatus.BAD_REQUEST).json(Map.of("ok", false, "error", "invalid_json"));
-        return;
-      }
-
-      var v = node.hasNonNull("v") ? node.get("v").asText() : null;
-      if (v == null) {
-        ctx.status(HttpStatus.BAD_REQUEST).json(Map.of("ok", false, "error", "missing_value"));
-        return;
-      }
-
-      try {
-        String k_now = Ids1ms.nextIsoWith1msGap();
-        S.pmap.putWithLimit(k_now, v, S.MAX_ENTRIES);
-        ctx.status(HttpStatus.CREATED).json(Map.of("ok", true, "k", k_now));
-      } catch (IOException e) {
-        ctx.status(HttpStatus.INTERNAL_SERVER_ERROR).json(Map.of("ok", false, "error", "io_error"));
-      }
-    });
-
     // GET 1 chave
     app.get("/api/pmap/{k}", ctx -> {
       var k = ctx.pathParam("k");
@@ -103,9 +78,6 @@ public class App {
       ctx.json(Map.of("ok", true, "items", S.pmap.snapshot()));
     });
 
-    // ========= WaboxApp webhook =========
-    // Configure no painel do Wabox a sua hook URL, por ex. https://seu.dominio.com/wabox/hook
-    // e defina WBX_TOKEN no ambiente para validar chamadas.
     app.post("/wabox/hook", ctx -> {
       // 1) valida token
       String expected = System.getenv().getOrDefault("WBX_TOKEN", "");
@@ -136,21 +108,13 @@ public class App {
           String ack       = ctx.formParam("message[ack]");
           String dtm       = ctx.formParam("message[dtm]");        // epoch seconds
 
-          // Exemplo: só processar mensagens de entrada "chat"
           if ("i".equalsIgnoreCase(msgDir) && "chat".equalsIgnoreCase(msgType) && msgText != null) {
-            // Monte uma linha “bonita” pro seu feed
-            // String pretty = (fromName != null ? fromName : (fromUid != null ? fromUid : "WA")) + ": " + msgText;
-            String pretty = msgText;
-
-            // Insere no KV como mais uma mensagem (mantendo as 50 últimas)
-            // Usamos o seu gerador de IDs (ISO-8601 c/ espaçamento de 1ms)
-            try {
-              String k = Ids1ms.nextIsoWith1msGap();
-              S.pmap.putWithLimit(k, pretty, S.MAX_ENTRIES);
-            } catch (IOException e) {
-              e.printStackTrace();
-              // segue com 200 para não gerar reenvio do webhook
-            }
+            ObjectNode v = S.JSON.createObjectNode();
+            v.put("text", msgText);
+            if (fromName != null) v.put("name", fromName);
+            if (fromUid  != null) v.put("wa", S.normalizeWa(fromUid));
+            String k = Ids1ms.nextIsoWith1msGap();
+            S.pmap.putWithLimit(k, S.JSON.writeValueAsString(v), S.MAX_ENTRIES);
           }
 
           // Responda rápido. O Wabox só precisa de 200 OK.

@@ -1,7 +1,5 @@
 (function(){
   const feed = document.getElementById('feed');
-  const form = document.getElementById('postForm');
-  const inputMsg = document.getElementById('message');
   const btnTheme = document.getElementById('btnTheme');
 
   // === BACKEND ===
@@ -17,31 +15,6 @@
   initTheme();
   loadFromServer();
   setInterval(()=>{ if(!paused) pollServer(); }, 4000);
-
-  // Enviar mensagem
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    const text = inputMsg.value.trim();
-    if(!text){ inputMsg.focus(); return; }
-    inputMsg.value = '';
-
-    try {
-      await sendToServer(text);
-      await pollServer();
-    } catch {
-      pushSystem('Falha ao enviar ao servidor.');
-    }
-  });
-
-  // ==== Backend calls ====
-  async function sendToServer(text){
-    const res = await fetch(API + '/api/pmap', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ v: text })
-    });
-    if(!res.ok) throw new Error('send failed');
-  }
 
   async function loadFromServer(){
     const res = await fetch(API + '/api/pmap', { cache:'no-store' });
@@ -66,16 +39,53 @@
     }
   }
 
-  function renderServerItem(idIso, text){
-    if(SEEN.has(idIso)) return;
+  function renderServerItem(idIso, vStr){
+    if (SEEN.has(idIso)) return;
     SEEN.add(idIso);
+
+    // tenta parsear JSON salvo em 'v'
+    let data = { text: String(vStr) };
+    try {
+      const p = JSON.parse(vStr);
+      if (p && typeof p === 'object') data = p;
+    } catch(_) {}
+
     const ts = Date.parse(idIso) || Date.now();
-    addMsg({ type:'group', text:String(text), ts, group:{name:'Feed', verified:false} });
-    if(!paused){
-      const chatWrap = document.getElementById('chatWrap');
-      chatWrap.scrollTop = 0;
+    const name = data.name ? String(data.name) : null;
+    const wa   = data.wa ? String(data.wa) : null;
+
+    // Botão WhatsApp (se tiver número)
+    let actions = '';
+    if (wa) {
+      const message = `Olá, vi sua mensagem no Mercado Milhas: "${(data.text||'').slice(0,140)}"`;
+      const href = `https://wa.me/${wa}?text=${encodeURIComponent(message)}`;
+      actions = `<a class="btn btn-sm btn-success ms-2" href="${href}" target="_blank" rel="noopener noreferrer">WhatsApp</a>`;
     }
+
+    // Cabeçalho (inclui nome se tiver)
+    const who = name ? escapeHtml(name) : 'Contato';
+    const header = `${who} · ${new Date(ts).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'msg my-2 msg-group';
+    wrap.dataset.id = idIso;
+    wrap.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center mb-1 meta">
+        <div>${header}</div>
+        <div>${actions}</div>
+      </div>
+      <div class="bubble border">${linkify(escapeHtml(data.text || String(vStr)))}</div>
+    `;
+
+    // insere no TOPO (se sua UI usa topo)
+    const feed = document.getElementById('feed');
+    if(feed.firstChild) feed.insertBefore(wrap, feed.firstChild);
+    else feed.appendChild(wrap);
+
+    // auto-scroll para o topo (se usa topo)
+    document.getElementById('chatWrap').scrollTop = 0;
   }
+
 
   // ==== UI helpers ====
   function pushUser(text){ addMsg({type:'user', text, ts: Date.now()}); }
@@ -96,8 +106,7 @@
 
     let badge = '';
     if(type==='group' && group?.verified){
-      badge = '<span class="badge badge-verified ms-2">grupo autorizado</span>' +
-              '<button class="badge badge-danger ms-2" data-action="report" data-id="' + id + '" data-text="' + escapeHtml(text) + '">denunciar</button>';
+      badge = '<span class="badge badge-verified ms-2">grupo autorizado</span>';
     }
 
     wrap.innerHTML =
@@ -112,15 +121,6 @@
     const chatWrap = document.getElementById('chatWrap');
     chatWrap.scrollTo({ top: 0, behavior: 'smooth' });
   }
-
-  // Report (delegação de clique)
-  feed.addEventListener('click', function(e){
-    const a = e.target.closest('[data-action="report"]');
-    if(!a) return;
-    const id = a.getAttribute('data-id');
-    const txt = a.getAttribute('data-text') || '';
-    alert('Denúncia registrada (MVP)\nID: ' + id + '\n\n' + txt);
-  });
 
   // Theme
   function initTheme(){

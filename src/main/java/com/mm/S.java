@@ -39,6 +39,17 @@ public class S {
       return t;
     });
 
+  static String normalizeWa(String raw) {
+    if (raw == null) return "";
+    String digits = raw.replaceAll("\\D+", ""); // só números
+    if (digits.isEmpty()) return "";
+    // Se não começa com país e tem 10/11 dígitos, assume BR (55)
+    if (!digits.startsWith("55") && (digits.length() == 10 || digits.length() == 11)) {
+      digits = "55" + digits;
+    }
+    return digits;
+  }    
+
   static {
     // Abre o pmap em data/pmap.ndjson
     try {
