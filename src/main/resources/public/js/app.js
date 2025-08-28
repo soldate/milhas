@@ -39,6 +39,14 @@
     }
   }
 
+  function firstName(raw){
+    if(!raw) return '';
+    const s = String(raw).trim();
+    // pega a sequência inicial de letras (inclui acentos), hífen e apóstrofo
+    const m = s.match(/^[\p{L}\p{M}\-']+/u);
+    return m ? m[0] : s.split(/\s+/u)[0];
+  }  
+
   function renderServerItem(idIso, vStr){
     if (SEEN.has(idIso)) return;
     SEEN.add(idIso);
@@ -64,7 +72,7 @@
 
     // Cabeçalho (inclui nome se tiver)
     const who = name ? escapeHtml(name) : 'Contato';
-    const header = `${who} · ${new Date(ts).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+    const header = `${firstName(who)} · ${new Date(ts).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
 
     const wrap = document.createElement('div');
     wrap.className = 'msg my-2 msg-group';
