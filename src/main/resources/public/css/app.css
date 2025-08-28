@@ -61,6 +61,13 @@ body{background:var(--bg-main);color:var(--text)}
 .logo-mm .arrow-shaft{ stroke-width:5; stroke-linecap:round; }
 .logo-mm .arrow-head{ fill: currentColor; }
 
+/* preserva quebras de linha e espaços como no WhatsApp */
+.msg .bubble{
+  white-space: pre-wrap;     /* respeita \n e mantém espaçamento */
+  overflow-wrap: anywhere;   /* evita overflow em links muito longos */
+  /* ou, se preferir: word-break: break-word; */
+}
+
 .chat-wrap{
   scroll-behavior: smooth;
   height: calc(100vh - 152px);

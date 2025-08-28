@@ -25,7 +25,7 @@
     for(const k of keys) renderServerItem(k, items[k]);
     if(keys.length) lastSeen = keys[keys.length - 1];
 
-    pushSystem('Bem-vindo(a)! Digite sua mensagem e publique. Mensagens de grupos autorizados aparecerão aqui.');
+    pushSystem('Bem-vindo(a)! Mensagens enviadas para esse número de<a class="btn btn-sm btn-success ms-2" href="https://wa.me/556182068231" target="_blank" rel="noopener noreferrer">WhatsApp</a> aparecem aqui. Adicione no seu grupo de milhas e todas as mensagens virão pra cá!');
   }
 
   async function pollServer(){
@@ -111,7 +111,7 @@
 
     wrap.innerHTML =
       '<div class="meta mb-1">' + header + ' ' + badge + '</div>' +
-      '<div class="bubble">' + linkify(escapeHtml(text)) + '</div>';
+      '<div class="bubble">' + (type=='system'?text:linkify(escapeHtml(text))) + '</div>';
 
     // NOVAS NO TOPO
     if(feed.firstChild) feed.insertBefore(wrap, feed.firstChild);
