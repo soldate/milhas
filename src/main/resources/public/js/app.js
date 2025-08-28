@@ -25,7 +25,7 @@
     for(const k of keys) renderServerItem(k, items[k]);
     if(keys.length) lastSeen = keys[keys.length - 1];
 
-    pushSystem('Bem-vindo(a)! Mensagens enviadas para esse número de<a class="btn btn-sm btn-success ms-2" href="https://wa.me/556182068231" target="_blank" rel="noopener noreferrer">WhatsApp</a> aparecem aqui. Adicione no seu grupo de milhas e todas as mensagens virão pra cá!');
+    pushSystem('Bem-vindo(a)! Mensagens enviadas para esse<a class="btn btn-sm btn-success ms-2" href="https://wa.me/556182068231" target="_blank" rel="noopener noreferrer">número de WhatsApp</a> aparecem aqui. Adicione no seu grupo de milhas e todas as mensagens virão pra cá!');
   }
 
   async function pollServer(){
