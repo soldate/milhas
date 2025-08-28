@@ -79,7 +79,7 @@
     const btn = e.target.closest('[data-action="delete"]');
     if(!btn) return;
     const id = btn.getAttribute('data-id');
-    if(!confirm('Excluir esta mensagem?\n\nID:\n' + id)) return;
+    // if(!confirm('Excluir esta mensagem?\n\nID:\n' + id)) return;
 
     try{
       const res = await fetch(API + '/api/pmap/' + encodeURIComponent(id), { method:'DELETE' });
